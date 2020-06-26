@@ -1,0 +1,2 @@
+# MyScripts
+Sıklıkla Kullandığım Scriptler
