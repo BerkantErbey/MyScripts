@@ -1,0 +1,115 @@
+FFmpeg Commands
+
+-Splitting video equal time segments
+/home/berkant/ffmpeg/ffmpeg -i input.mkv -c copy -map 0 -segment_time 00:01:00 -f segment -reset_timestamps 1 output_%d.mkv
+
+-Converting x265
+ffmpeg -i input.mp4 -c:v libx265 -c:a copy out.mkv
+ffmpeg -i input.mp4 -c:v libx265 -s 1920x1080 -c:a copy out.mkv
+
+-Converting yuv
+ffmpeg -i input.mkv -c:v rawvideo -pixel_format yuv420p original.yuv
+
+
+-Streaming
+ffmpeg -i input.mp4 -c:v copy -c:a copy -f rtmsp udp://targetIP:PORT
+
+- VMAF Model
+- 6 point 
+-Scaling Video Resolution If Needed
+
+
+1 minutes part
+-16, 24, 33
+
+Without video audio subtitle
+ffmpeg -i input.mp4 -vn -an -sn -c copy out.mp4
+
+
+-Extracting unknown bin_data
+ffmpeg -i in.mov -map_metadata -1 -c:v copy -c:a copy out.mov
+
+
+-Screenshots
+ffmpeg -i input.mov -r 0.25 output_%04d.png
+ffmpeg -ss 3 -i input.mp4 -vf "select=gt(scene\,0.4)" -frames:v 5 -vsync vfr -vf fps=fps=1/50 out%02d.jpg
+
+
+pumbg
+p   Wake on PHY activity
+u   Wake on unicast messages
+m   Wake on multicast messages
+b   Wake on broadcast messages
+  	a   Wake on ARP
+g   Wake on MagicPacket™
+  	s   Enable SecureOn™ password for MagicPacket™
+  	f   Wake on filter(s)
+  	d   Disable  (wake on nothing).  This option clears all previous
+                      options.
+
+
+
+26 10 14 27 1
+
+
+
+ffmpeg \
+  -vaapi_device /dev/dri/renderD128 \
+  -i "4/output_27.mkv" \
+  -vf 'format=nv12,hwupload' \
+  -map 0:0 \
+  -c:v hevc_vaapi \
+  -map 0:a \
+  -c:a copy \
+  -rc_mode CQP \
+  -global_quality 25 \
+  video_04_CQP_25.mkv
+
+
+
+python3 $exe2 -d video_04_CQP_24.mkv -r 4/output_27.mkv
+
+
+
+
+-AV1 Encoding
+ffmpeg -i input.mp4 -c:v libaom-av1 -crf 30 -b:v 0 av1_test.mkv
+
+
+
+-Screenshot
+ffmpeg  -i input.mp4 -r 0.0033 -vf scale=-1:120 -vcodec png capture-%002d.png
+montage -title "Movie Name\nSubtitle" -geometry +4+4 capture*.png output.png
+
+
+
+/makeScreenShot.sh -i 240s -c 3 -n 9 -H 360 -U0 file.mp4 -o output.png
+4045 4692
+mtn -f /usr/share/fonts/truetype/ubuntu/UbuntuMono-RI.ttf -c 3 -r 3 -h 360 file.mp4
+
+
+
+
+python3 $exe2 -d 5/encoded1080p_30.mkv -r 5/output_30.mkv && sleep 2s && python3 $exe2 -d 6/encoded4k_30.mkv -r 5/output_30.mkv
+
+
+5:19 1080p
+5:21 4k
+
+-Cutting video
+ffmpeg -ss 30s -t 30s -i input.mp4 -c:v copy -c:a copy output.mkv
+
+exe1='/home/berkant/ffmpeg/ffmpeg'
+exe2='/home/berkant/easyVmaf/easyVmaf.py'
+
+$exe1 -ss 00:05:19 -t 00:00:30 -i input.mp4 -c:v libx265 -c:a copy encoded1080pCustom.mkv
+$exe1 -ss 00:05:21 -t 00:00:30 -i input.mp4 -c:v libx265 -s 1920x1080 -c:a copy encoded4kCustom.mkv
+
+
+python3 $exe2 -d encoded4k_22.mkv -r ../7/output1080p_22.mkv && sleep 2s && python3 $exe2 -d ../7/encoded1080p_22.mkv -r ../7/output1080p_22.mkv
+
+
+
+-Subtitle
+Aegisub
+https://unix.stackexchange.com/questions/256138/is-there-any-decent-speech-recognition-software-for-linux

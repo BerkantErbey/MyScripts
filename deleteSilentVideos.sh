@@ -16,7 +16,7 @@ do
 	newname=`echo $oldname | sed -e 's/ /_/g'`; mv "$oldname" "$newname";
 done
 
-
+rm *.gif
 ls *.mp4 *.webm >>$input
 
 while read -r line
